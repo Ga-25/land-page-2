@@ -540,7 +540,7 @@ function firePurchaseEvent(){
     content_ids: [productId],
     content_name: productName,
     content_type: 'subscription',
-    value: productValue,  // VALOR REAL DO PRODUTO!
+    value: productValue,
     currency: 'BRL',
     num_items: 1,
     order_id: transactionId
@@ -556,12 +556,11 @@ function firePurchaseEvent(){
 
 
 
-  // CAPI COM DADOS REAIS
+  // CAPI COM PAYLOAD CORRETO
   fetch("https://capi-api-2.onrender.com/purchase", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      event_name: "Purchase",
       event_id: eventId,
       event_source_url: window.location.href,
       user: {
@@ -571,26 +570,19 @@ function firePurchaseEvent(){
         fbp: localStorage.getItem("_fbp") || "",
         fbc: localStorage.getItem("_fbc") || ""
       },
-      custom_data: {
-        content_ids: [productId],
-        content_name: productName,
-        content_type: "subscription",
-        value: productValue,  // VALOR REAL!
-        currency: "BRL",
-        num_items: 1,
-        order_id: transactionId
-      }
+      product_value: productValue,
+      product_name: productName,
+      product_id: productId,
+      transaction_id: transactionId
     })
   })
   .then(r => r.json())
   .then(j => {
     console.log('📡 CAPI Purchase enviado:', j);
-    // Mostrar confirmação visual
     showPurchaseConfirmation(productName, productValue);
   })
   .catch(e => {
     console.error('❌ CAPI Purchase error:', e);
-    // Mesmo com erro na CAPI, o pixel client já foi enviado
   });
 }
 
