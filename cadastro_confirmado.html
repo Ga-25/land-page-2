@@ -498,92 +498,96 @@ function initFinalPixelEvents(){
     }
 
 function firePurchaseEvent(){
-  // Evita disparo múltiplo
-  if(localStorage.getItem('purchase_fired')) {
-    console.log('✅ Purchase já disparado. Pulando para evitar duplicação.');
-    return;
-  }
+    // Evita disparo múltiplo
+    if(localStorage.getItem('purchase_fired')) {
+        console.log('✅ Purchase já disparado. Pulando para evitar duplicação.');
+        return;
+    }
 
 
 
-  if (typeof fbq === 'undefined') {
-    console.warn('⚠️ fbq não disponível — Purchase não será disparado no client.');
-    return;
-  }
+    if (typeof fbq === 'undefined') {
+        console.warn('⚠️ fbq não disponível — Purchase não será disparado no client.');
+        return;
+    }
 
 
 
-  // CAPTURAR DADOS REAIS DO PRODUTO
-  const productValue = parseFloat(localStorage.getItem("product_value")) || 25.00;
-  const productName = localStorage.getItem("product_name") || "StreamForce Premium";
-  const productId = localStorage.getItem("product_id") || "streamforce-premium";
-  const transactionId = localStorage.getItem("transacao") || null;
-  const userName = localStorage.getItem("user_name") || "";
+    // CAPTURAR DADOS REAIS DO PRODUTO
+    const productValue = parseFloat(localStorage.getItem("product_value")) || 25.00;
+    const productName = localStorage.getItem("product_name") || "StreamForce Premium";
+    const productId = localStorage.getItem("product_id") || "streamforce-premium";
+    const transactionId = localStorage.getItem("transacao") || null;
+    const userName = localStorage.getItem("user_name") || "";
 
 
 
-  const eventId = 'purchase_' + Date.now() + '_' + Math.floor(Math.random()*100000);
+    const eventId = 'purchase_' + Date.now() + '_' + Math.floor(Math.random()*100000);
 
 
 
-  console.log('🚀 Disparando Purchase:', {
-    produto: productName,
-    valor: productValue,
-    id: productId,
-    usuario: userName
-  });
+    console.log('🚀 Disparando Purchase:', {
+        produto: productName,
+        valor: productValue,
+        id: productId,
+        usuario: userName
+    });
 
 
 
-  // PIXEL COM DADOS REAIS
-  fbq('track', 'Purchase', {
-    content_ids: [productId],
-    content_name: productName,
-    content_type: 'subscription',
-    value: productValue,
-    currency: 'BRL',
-    num_items: 1,
-    order_id: transactionId
-  }, { eventID: eventId });
+    // ✅ PIXEL PURCHASE CORRIGIDO COM PREDICTED_LTV
+    fbq('track', 'Purchase', {
+        content_ids: [productId],
+        content_name: productName,
+        content_type: 'product',
+        content_category: 'digital_subscription',
+        value: productValue,
+        currency: 'BRL',
+        num_items: 1,
+        predicted_ltv: Math.round(productValue * 8.5), // ✅ LTV OBRIGATÓRIO
+        order_id: transactionId,
+        delivery_category: 'digital_product'
+    }, { eventID: eventId });
 
 
 
-  // Salvar flag para evitar reenvio
-  try { 
-    localStorage.setItem('purchase_fired', eventId);
-    localStorage.setItem('purchase_timestamp', new Date().toISOString());
-  } catch(e){}
+    // Salvar flag para evitar reenvio
+    try { 
+        localStorage.setItem('purchase_fired', eventId);
+        localStorage.setItem('purchase_timestamp', new Date().toISOString());
+    } catch(e){}
 
 
 
-  // CAPI COM PAYLOAD CORRETO
-  fetch("https://capi-api-2.onrender.com/purchase", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event_id: eventId,
-      event_source_url: window.location.href,
-      user: {
-        name: localStorage.getItem("user_name") || "",
-        email: localStorage.getItem("user_email") || "",
-        phone: localStorage.getItem("user_phone") || "",
-        fbp: localStorage.getItem("_fbp") || "",
-        fbc: localStorage.getItem("_fbc") || ""
-      },
-      product_value: productValue,
-      product_name: productName,
-      product_id: productId,
-      transaction_id: transactionId
+    // ✅ CAPI PURCHASE CORRIGIDA
+    fetch("https://capi-api-2.onrender.com/purchase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            event_id: eventId,
+            event_source_url: window.location.href,
+            user: {
+                name: localStorage.getItem("user_name") || "",
+                email: localStorage.getItem("user_email") || "",
+                phone: localStorage.getItem("user_phone") || "",
+                fbp: localStorage.getItem("_fbp") || "",
+                fbc: localStorage.getItem("_fbc") || ""
+            },
+            product_value: productValue,
+            product_name: productName,
+            product_id: productId,
+            transaction_id: transactionId,
+            predicted_ltv: Math.round(productValue * 8.5) // ✅ ADICIONAR PREDICTED_LTV AQUI TAMBÉM
+        })
     })
-  })
-  .then(r => r.json())
-  .then(j => {
-    console.log('📡 CAPI Purchase enviado:', j);
-    showPurchaseConfirmation(productName, productValue);
-  })
-  .catch(e => {
-    console.error('❌ CAPI Purchase error:', e);
-  });
+    .then(r => r.json())
+    .then(j => {
+        console.log('📡 CAPI Purchase enviado:', j);
+        showPurchaseConfirmation(productName, productValue);
+    })
+    .catch(e => {
+        console.error('❌ CAPI Purchase error:', e);
+    });
 }
 
 
