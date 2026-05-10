@@ -2,27 +2,42 @@
 <html lang="pt-BR">
 <head>
 
-   <meta name="facebook-domain-verification" content="j7m8yhp3mxy1suwhcwfmqva53i5lnh" />
 
-<!-- Meta Pixel Code (PRINCIPAL + BACKUP) -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-
-fbq('init', '2053908158526828'); // Pixel principal
-fbq('track', 'PageView');
+   <script>
+  // capturar fbclid e gravar em cookie _fbc + localStorage
+  (function() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fbclid = params.get('fbclid');
+      if (!fbclid) return;
+      // formato recomendado: fb.1.<timestamp>.<fbclid>
+      const fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      // salva cookie _fbc (2 anos)
+      document.cookie = `_fbc=${encodeURIComponent(fbc)}; path=/; max-age=${60*60*24*365*2}; SameSite=None; Secure`;
+      // salva no localStorage para enviar na CAPI
+      localStorage.setItem('_fbc', fbc);
+      console.log('fbc salvo:', fbc);
+    } catch(e){ console.warn('erro capturar fbclid', e); }
+  })();
 </script>
-<noscript>
-  <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=2053908158526828&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Meta Pixel Code -->
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2053908158526828');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2053908158526828&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
 
   <meta charset="UTF-8" />
@@ -171,78 +186,33 @@ fbq('track', 'PageView');
 
   <script>
     const CONFIG = {
-    whatsappNumber: '5577998715412',
-    pixelId: '2053908158526828'
-    };
+    whatsappNumber: '5577998715412'
+  };
 
+  document.addEventListener('DOMContentLoaded', function() {
 
-    // FUNÇÃO PARA MOSTRAR PRODUTO CONFIRMADO
-    function displayConfirmedProduct() {
-    const productValue = localStorage.getItem("product_value");
-    const productName = localStorage.getItem("product_name");
-    const userName = localStorage.getItem("user_name");
-    
-    if (productName && productValue) {
-        // Atualizar o título principal
-        const mainTitle = document.querySelector('.main-title');
-        if (mainTitle && userName) {
-        mainTitle.innerHTML = `Parabéns ${userName.split(' ')[0]}!`;
-        }
-        
-        // Atualizar subtitle com produto
-        const subtitle = document.querySelector('.main-subtitle');
-        if (subtitle) {
-        subtitle.innerHTML = `Seu plano <strong style="color: #22c55e;">${productName}</strong> foi ativado com sucesso!`;
-        }
-        
-        // Adicionar badge com valor
-        const successHeader = document.querySelector('.success-header');
-        if (successHeader && !document.querySelector('.product-badge')) {
-        const productBadge = document.createElement('div');
-        productBadge.className = 'product-badge';
-        productBadge.style.cssText = `
-            background: rgba(34,197,94,.15);
-            color: #86efac;
-            border: 1px solid rgba(34,197,94,.4);
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 0.8rem;
-            letter-spacing: 0.4px;
-            margin-left: 10px;
-        `;
-        productBadge.textContent = `R$ ${parseFloat(productValue).toFixed(2)}`;
-        successHeader.appendChild(productBadge);
-        }
-        
-        console.log('✅ Produto confirmado:', productName, 'Valor:', productValue);
-    }
-    }
+    const params = new URLSearchParams(window.location.search);
 
-   document.addEventListener('DOMContentLoaded', function() {
-  // Debug dos dados
-  debugPixelData();
-  
-  // Mostrar produto confirmado
-  displayConfirmedProduct();
-  
-  // Inicializar funcionalidades
-  initFinalPixelEvents();
-  initCountdown();
-  initSuccessTracking();
-  initAutoActions();
-  addVisualEffects();
-  initConfetti();
-  
-  // Disparar Purchase após pequeno delay
-  setTimeout(() => {
+    ['utm_source','utm_campaign','utm_medium','utm_content','utm_term']
+    .forEach(param => {
+        const value = params.get(param);
+
+        if(value){
+            localStorage.setItem(param, value);
+        }
+    });
+
+    // NÃO inicialize o Pixel aqui — ele já foi iniciado no <head>.
+    // Apenas chame os inits da página:
+    initFinalPixelEvents();
+    fireAddPaymentInfoEvent();  // Dispara Purchase uma única vez
+    initCountdown();
+    initSuccessTracking();
+    initAutoActions();
+    addVisualEffects();
+    initConfetti();
     firePurchaseEvent();
-  }, 1500);
-  
-  console.log('🎉 Página de confirmação StreamForce carregada');
-  console.log('📊 Pixel ID:', CONFIG.pixelId);
-  console.log('📱 WhatsApp:', CONFIG.whatsappNumber);
-});
+  });
 
 function initFinalPixelEvents(){
   if(typeof fbq==='undefined') return;
@@ -252,6 +222,39 @@ function initFinalPixelEvents(){
     eventsource:'successpage',conversion_complete:true,timestamp:new Date().toISOString()
   });
   setTimeout(()=>{ fbq('trackCustom','SuccessPageEngagement',{timeonpage:30}); }, 30000);
+}
+
+    function fireAddPaymentInfoEvent(){
+
+  if(localStorage.getItem('addpaymentinfo_fired')){
+    return;
+  }
+
+  if(typeof fbq === 'undefined'){
+    return;
+  }
+
+  const eventId =
+    'addpayment_' +
+    Date.now() +
+    '_' +
+    Math.floor(Math.random() * 100000);
+
+  fbq('track', 'AddPaymentInfo', {
+    content_category: 'Streaming Subscription',
+    content_name: 'StreamForce Premium',
+    value: 25.00,
+    currency: 'BRL'
+  }, {
+    eventID: eventId
+  });
+
+  try{
+    localStorage.setItem(
+      'addpaymentinfo_fired',
+      eventId
+    );
+  }catch(e){}
 }
 
 
@@ -361,103 +364,22 @@ function initFinalPixelEvents(){
     }
 
     function sendWhatsAppNotification(){
-    const productName = localStorage.getItem("product_name") || "StreamForce Premium";
-    const productValue = localStorage.getItem("product_value") || "25.00";
-    const userName = localStorage.getItem("user_name") || "Cliente";
-    const userEmail = localStorage.getItem("user_email") || "";
-    const userPhone = localStorage.getItem("user_phone") || "";
-    
-    const message = `🎉 STREAMFORCE - PURCHASE CONFIRMADO!
+      const message = `🎉 StreamForce - CADASTRO FINALIZADO COM SUCESSO
+✅ Status: Cadastro ativado e confirmado
+⏰ Data/Hora: ${new Date().toLocaleString('pt-BR')}
+📱 Próximo passo: Aguardar dados de acesso
 
-    
+🎬 Informações importantes:
+• Seus dados de acesso serão enviados em até 5 minutos
+• Você receberá tutorial de instalação completo
+• Suporte técnico 24/7 disponível
+• Qualidade 4K garantida
 
-    👤 Cliente: ${userName}
-    📧 Email: ${userEmail}
-    📱 WhatsApp: ${userPhone}
-    💰 Produto: ${productName}
-    💵 Valor: R$ ${parseFloat(productValue).toFixed(2)}
-    ✅ Status: PURCHASE disparado com sucesso
-    ⏰ Data/Hora: ${new Date().toLocaleString('pt-BR')}
-
-    
-
-    🚀 Pixel otimizado funcionando perfeitamente!
-    📊 Conversão de alto valor registrada no Facebook.
-
-    
-
-    Próximo passo: Enviar dados de acesso ao cliente.`;
-
-    
-
-    const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
-    console.log('📱 WhatsApp URL (automática):', url);
-    // Opcional: abrir automaticamente
-    // window.open(url,'_blank');
-    }
-
-
-    // FUNÇÃO DE DEBUG AVANÇADO
-    function debugPixelData() {
-    console.log('🔍 DEBUG - Dados do LocalStorage:');
-    console.log('👤 user_name:', localStorage.getItem("user_name"));
-    console.log('📧 user_email:', localStorage.getItem("user_email"));
-    console.log('📱 user_phone:', localStorage.getItem("user_phone"));
-    console.log('🎯 product_name:', localStorage.getItem("product_name"));
-    console.log('💰 product_value:', localStorage.getItem("product_value"));
-    console.log('🆔 product_id:', localStorage.getItem("product_id"));
-    console.log('💳 transacao:', localStorage.getItem("transacao"));
-    console.log('🍪 _fbp:', localStorage.getItem("_fbp"));
-    console.log('🍪 _fbc:', localStorage.getItem("_fbc"));
-    console.log('✅ purchase_fired:', localStorage.getItem("purchase_fired"));
-    
-    // Verificar se todos os dados necessários estão presentes
-    const requiredData = ['user_name', 'user_email', 'product_name', 'product_value'];
-    const missingData = requiredData.filter(key => !localStorage.getItem(key));
-    
-    if (missingData.length > 0) {
-        console.warn('⚠️ DADOS FALTANDO:', missingData);
-        // Mostrar aviso visual
-        showDataWarning(missingData);
-    } else {
-        console.log('✅ Todos os dados necessários estão presentes!');
-    }
-    }
-
-   
-
-    // FUNÇÃO PARA MOSTRAR AVISO DE DADOS FALTANDO
-    function showDataWarning(missingData) {
-    const warning = document.createElement('div');
-    warning.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background: #7a0912;
-        color: #fecaca;
-        padding: 14px 16px;
-        border-radius: 12px;
-        border: 1px solid rgba(239,68,68,.4);
-        font-weight: 600;
-        z-index: 9999;
-        max-width: 300px;
-        font-size: 0.9rem;
-    `;
-    
-    warning.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-        <span>⚠️</span>
-        <strong>Dados Incompletos</strong>
-        </div>
-        <div style="font-size: 0.8rem; opacity: 0.9;">
-        Faltando: ${missingData.join(', ')}
-        </div>
-    `;
-    
-    document.body.appendChild(warning);
-    
-    // Remover após 10 segundos
-    setTimeout(() => warning.remove(), 10000);
+🚀 Bem-vindo à StreamForce Premium!`;
+      const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+      console.log('WhatsApp URL (automática):', url);
+      // Opcional: abrir automaticamente
+      // window.open(url,'_blank');
     }
 
     function addVisualEffects(){
@@ -497,181 +419,112 @@ function initFinalPixelEvents(){
       });
     }
 
+function sendCAPIEvent(payload) {
+    const url = "https://capi-api-2.onrender.com/event";
+
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        const ok = navigator.sendBeacon(url, blob);
+        console.log('📡 CAPI via sendBeacon =>', ok);
+        return Promise.resolve({ beacon: ok });
+      }
+    } catch(e){
+      console.warn('sendBeacon falhou', e);
+    }
+
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true
+    })
+    .then(res => res.ok ? res.json().catch(()=>({ ok: true })) : { ok: false, status: res.status })
+    .catch(err => {
+      console.error('❌ CAPI fetch error', err);
+      return { ok: false, error: String(err) };
+    });
+  }
+
 function firePurchaseEvent(){
-    // Evita disparo múltiplo
-    if(localStorage.getItem('purchase_fired')) {
-        console.log('✅ Purchase já disparado. Pulando para evitar duplicação.');
-        return;
-    }
+  // evita disparo múltiplo (por reload)
+const currentOrderId =
+localStorage.getItem("transacao") || "N/A";
 
+const lastPurchaseOrder =
+localStorage.getItem("last_purchase_order");
 
-
-    if (typeof fbq === 'undefined') {
-        console.warn('⚠️ fbq não disponível — Purchase não será disparado no client.');
-        return;
-    }
-
-
-
-    // CAPTURAR DADOS REAIS DO PRODUTO
-    const productValue = parseFloat(localStorage.getItem("product_value")) || 25.00;
-    const productName = localStorage.getItem("product_name") || "StreamForce Premium";
-    const productId = localStorage.getItem("product_id") || "streamforce-premium";
-    const transactionId = localStorage.getItem("transacao") || null;
-    const userName = localStorage.getItem("user_name") || "";
-
-
-
-    const eventId = 'purchase_' + Date.now() + '_' + Math.floor(Math.random()*100000);
-
-
-
-    console.log('🚀 Disparando Purchase:', {
-        produto: productName,
-        valor: productValue,
-        id: productId,
-        usuario: userName
-    });
-
-
-
-    // ✅ PIXEL PURCHASE CORRIGIDO COM PREDICTED_LTV
-    fbq('track', 'Purchase', {
-        content_ids: [productId],
-        content_name: productName,
-        content_type: 'product',
-        content_category: 'digital_subscription',
-        value: productValue,
-        currency: 'BRL',
-        num_items: 1,
-        predicted_ltv: Math.round(productValue * 8.5), // ✅ LTV OBRIGATÓRIO
-        order_id: transactionId,
-        delivery_category: 'digital_product'
-    }, { eventID: eventId });
-
-
-
-    // Salvar flag para evitar reenvio
-    try { 
-        localStorage.setItem('purchase_fired', eventId);
-        localStorage.setItem('purchase_timestamp', new Date().toISOString());
-    } catch(e){}
-
-
-
-    // ✅ CAPI PURCHASE CORRIGIDA
-    fetch("https://capi-api-2.onrender.com/purchase", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            event_id: eventId,
-            event_source_url: window.location.href,
-            user: {
-                name: localStorage.getItem("user_name") || "",
-                email: localStorage.getItem("user_email") || "",
-                phone: localStorage.getItem("user_phone") || "",
-                fbp: localStorage.getItem("_fbp") || "",
-                fbc: localStorage.getItem("_fbc") || ""
-            },
-            product_value: productValue,
-            product_name: productName,
-            product_id: productId,
-            transaction_id: transactionId,
-            predicted_ltv: Math.round(productValue * 8.5) // ✅ ADICIONAR PREDICTED_LTV AQUI TAMBÉM
-        })
-    })
-    .then(r => r.json())
-    .then(j => {
-        console.log('📡 CAPI Purchase enviado:', j);
-        showPurchaseConfirmation(productName, productValue);
-    })
-    .catch(e => {
-        console.error('❌ CAPI Purchase error:', e);
-    });
+if(lastPurchaseOrder === currentOrderId){
+  console.log('⚠️ Purchase já enviado para esta transação.');
+  return;
 }
 
-
-
-// FUNÇÃO PARA MOSTRAR CONFIRMAÇÃO VISUAL
-function showPurchaseConfirmation(productName, productValue) {
-  // Criar toast de confirmação
-  const confirmationToast = document.createElement('div');
-  confirmationToast.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(45deg, #22c55e, #16a34a);
-    color: white;
-    padding: 16px 20px;
-    border-radius: 12px;
-    font-weight: 700;
-    box-shadow: 0 10px 28px rgba(34, 197, 94, 0.35);
-    z-index: 9999;
-    animation: slideInRight 0.3s ease both;
-    max-width: 300px;
-  `;
-  
-  confirmationToast.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span>✅</span>
-      <div>
-        <div style="font-size: 0.9rem;">Purchase Confirmado!</div>
-        <div style="font-size: 0.8rem; opacity: 0.9;">${productName} - R$ ${productValue.toFixed(2)}</div>
-      </div>
-    </div>
-  `;
-  
-  document.body.appendChild(confirmationToast);
-  
-  // Remover após 5 segundos
-  setTimeout(() => {
-    confirmationToast.style.animation = 'slideOutRight 0.3s ease forwards';
-    setTimeout(() => confirmationToast.remove(), 300);
-  }, 5000);
-}
-
-
-
-// Adicionar CSS das animações
-const animationStyle = document.createElement('style');
-animationStyle.textContent = `
-  @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(100px); }
-    to { opacity: 1; transform: translateX(0); }
+  if (typeof fbq === 'undefined') {
+    console.warn('fbq não disponível — Purchase não será disparado no client.');
+    return;
   }
-  @keyframes slideOutRight {
-    to { opacity: 0; transform: translateX(100px); }
-  }
-`;
-document.head.appendChild(animationStyle);
 
-// BOTÃO DE TESTE PARA DEBUG (REMOVER EM PRODUÇÃO)
-if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
-  const testButton = document.createElement('button');
-  testButton.textContent = '🧪 Testar Purchase';
-  testButton.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background: linear-gradient(45deg, #3b82f6, #2563eb);
-    color: white;
-    border: none;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0 8px 24px rgba(59,130,246,.35);
-  `;
-  
-  testButton.onclick = () => {
-    // Limpar flag para permitir novo teste
-    localStorage.removeItem('purchase_fired');
-    console.log('🧪 Flag de purchase limpa - testando novamente...');
-    firePurchaseEvent();
-  };
-  
-  document.body.appendChild(testButton);
+  const eventId = 'purchase_' + Date.now() + '_' + Math.floor(Math.random()*100000);
+
+  // Pixel (cliente)
+  fbq('track', 'Purchase', {
+    content_ids: ['StreamForce-premium'],
+    content_name: 'StreamForce Premium',
+    content_type: 'subscription',
+    value: Number(25.00),
+    currency: 'BRL',
+    order_id: String(
+      localStorage.getItem("transacao") || "N/A"
+    )
+  }, { eventID: eventId });
+
+  // salva flag para evitar reenvio se a pessoa atualizar a página
+  try { localStorage.setItem(
+  'last_purchase_order',
+  currentOrderId
+);
+
+localStorage.setItem(
+  'purchase_fired',
+  eventId
+); } catch(e){}
+
+const payload = {
+  event_name: "Purchase",
+  event_id: eventId,
+  event_source_url: window.location.href,
+  user: {
+    name: localStorage.getItem("user_name") || "",
+    first_name: localStorage.getItem("user_first_name") || "",
+    last_name: localStorage.getItem("user_last_name") || "",
+    email: localStorage.getItem("user_email") || "",
+    phone: localStorage.getItem("user_phone") || "",
+
+    external_id: localStorage.getItem("external_id") || "",
+    session_id: sessionStorage.getItem("session_id") || "",
+
+    fbp: localStorage.getItem("_fbp") || "",
+    fbc: localStorage.getItem("_fbc") || ""
+  },
+  custom_data: {
+    content_ids: ["StreamForce-premium"],
+    content_name: "StreamForce",
+    content_type: "subscription",
+
+    value: Number(25.00),
+    currency: "BRL",
+
+    order_id: localStorage.getItem("transacao") || "N/A",
+
+    utm_source: localStorage.getItem("utm_source") || "",
+    utm_campaign: localStorage.getItem("utm_campaign") || "",
+    utm_medium: localStorage.getItem("utm_medium") || "",
+    utm_content: localStorage.getItem("utm_content") || "",
+    utm_term: localStorage.getItem("utm_term") || ""
+  }
+};
+
+sendCAPIEvent(payload).then(resp => console.log('📡 CAPI resp', resp));
 }
 
 
