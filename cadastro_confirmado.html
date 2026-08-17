@@ -2,30 +2,42 @@
 <html lang="pt-BR">
 <head>
 
-   
 
-<!-- Meta Pixel Code (PRINCIPAL + BACKUP) -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-
-fbq('init', '1924811434878782'); // Pixel principal
-fbq('init', '4090331514445241'); // Pixel backup
-fbq('track', 'PageView');
+   <script>
+  // capturar fbclid e gravar em cookie _fbc + localStorage
+  (function() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fbclid = params.get('fbclid');
+      if (!fbclid) return;
+      // formato recomendado: fb.1.<timestamp>.<fbclid>
+      const fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      // salva cookie _fbc (2 anos)
+      document.cookie = `_fbc=${encodeURIComponent(fbc)}; path=/; max-age=${60*60*24*365*2}; SameSite=None; Secure`;
+      // salva no localStorage para enviar na CAPI
+      localStorage.setItem('_fbc', fbc);
+      console.log('fbc salvo:', fbc);
+    } catch(e){ console.warn('erro capturar fbclid', e); }
+  })();
 </script>
-<noscript>
-  <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1924811434878782&ev=PageView&noscript=1"/>
-  <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=4090331514445241&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Meta Pixel Code -->
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1924811434878782');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1924811434878782&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
 
   <meta charset="UTF-8" />
@@ -159,7 +171,7 @@ fbq('track', 'PageView');
     <div class="support-section">
       <div class="support-title">🆘 Não recebeu em 10 minutos?</div>
       <div class="support-text">Nossa equipe está sempre pronta para ajudar! Entre em contato conosco imediatamente.</div>
-      <a class="support-btn" target="_blank" href="https://wa.me/5577999779797?text=Ol%C3%A1!%20Finalizei%20meu%20cadastro%20na%20StreamForce%20mas%20ainda%20n%C3%A3o%20recebi%20os%20dados%20de%20acesso.%20Podem%20me%20ajudar%3F">📞 CONTATO EMERGENCIAL</a>
+      <a class="support-btn" target="_blank" href="https://wa.me/5577999066302?text=Ol%C3%A1!%20Finalizei%20meu%20cadastro%20na%20StreamForce%20mas%20ainda%20n%C3%A3o%20recebi%20os%20dados%20de%20acesso.%20Podem%20me%20ajudar%3F">📞 CONTATO EMERGENCIAL</a>
     </div>
 
     <div class="footer">
@@ -174,7 +186,7 @@ fbq('track', 'PageView');
 
   <script>
     const CONFIG = {
-    whatsappNumber: '5577999779797'
+    whatsappNumber: '5577999066302'
   };
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -307,7 +319,7 @@ function initFinalPixelEvents(){
     }
 
     function sendWhatsAppNotification(){
-      const message = `🎉 STREAMFORCE - CADASTRO FINALIZADO COM SUCESSO
+      const message = `🎉 StreamForce - CADASTRO FINALIZADO COM SUCESSO
 ✅ Status: Cadastro ativado e confirmado
 ⏰ Data/Hora: ${new Date().toLocaleString('pt-BR')}
 📱 Próximo passo: Aguardar dados de acesso
@@ -362,6 +374,33 @@ function initFinalPixelEvents(){
       });
     }
 
+function sendCAPIEvent(payload) {
+    const url = "https://capi-api-2.onrender.com/event";
+
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        const ok = navigator.sendBeacon(url, blob);
+        console.log('📡 CAPI via sendBeacon =>', ok);
+        return Promise.resolve({ beacon: ok });
+      }
+    } catch(e){
+      console.warn('sendBeacon falhou', e);
+    }
+
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true
+    })
+    .then(res => res.ok ? res.json().catch(()=>({ ok: true })) : { ok: false, status: res.status })
+    .catch(err => {
+      console.error('❌ CAPI fetch error', err);
+      return { ok: false, error: String(err) };
+    });
+  }
+
 function firePurchaseEvent(){
   // evita disparo múltiplo (por reload)
   if(localStorage.getItem('purchase_fired')) {
@@ -378,43 +417,39 @@ function firePurchaseEvent(){
 
   // Pixel (cliente)
   fbq('track', 'Purchase', {
-    content_ids: ['streamforce-premium'],
+    content_ids: ['StreamForce-premium'],
     content_name: 'StreamForce Premium',
     content_type: 'subscription',
-    value: 1.00,         // opcional, mas útil para otimização
-    currency: 'BRL'
+    value: 25.00,         // opcional, mas útil para otimização
+    currency: 'BRL',
+    order_id: localStorage.getItem("transacao") || "N/A"
   }, { eventID: eventId });
 
   // salva flag para evitar reenvio se a pessoa atualizar a página
   try { localStorage.setItem('purchase_fired', eventId); } catch(e){}
 
-  // CAPI -> envia para seu server (server.js irá hashear user_data)
-  fetch("https://capi-api-2.onrender.com/event", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event_name: "Purchase",
-      event_id: eventId,
-      event_source_url: window.location.href,
-      user: {
-        name: localStorage.getItem("user_name") || "",
-        email: localStorage.getItem("user_email") || "",
-        phone: localStorage.getItem("user_phone") || "",
-        fbp: localStorage.getItem("_fbp") || "",
-        fbc: localStorage.getItem("_fbc") || ""
-      },
-      custom_data: {
-        content_ids: ["streamforce-premium"],
-        content_name: "StreamForce Premium",
-        content_type: "subscription",
-        value: 25.00,
-        currency: "BRL"
-      }
-    })
-  })
-  .then(r => r.json())
-  .then(j => console.log('📡 CAPI Purchase resp', j))
-  .catch(e => console.error('❌ CAPI Purchase error', e));
+const payload = {
+  event_name: "Purchase",
+  event_id: eventId,
+  event_source_url: window.location.href,
+  user: {
+    name: localStorage.getItem("user_name") || "",
+    email: localStorage.getItem("user_email") || "",
+    phone: localStorage.getItem("user_phone") || "",
+    fbp: localStorage.getItem("_fbp") || "",
+    fbc: localStorage.getItem("_fbc") || ""
+  },
+  custom_data: {
+    content_ids: ["StreamForce-premium"],
+    content_name: "StreamForcePremium",
+    content_type: "subscription",
+    value: 25.00,
+    currency: "BRL",
+    order_id: localStorage.getItem("transacao") || "N/A"
+  }
+};
+
+sendCAPIEvent(payload).then(resp => console.log('📡 CAPI resp', resp));
 }
 
 
