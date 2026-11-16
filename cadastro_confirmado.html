@@ -1,95 +1,51 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta name="facebook-domain-verification" content="noq2idorwao5vkrxvo3aukf29ese03" />
 
 
-
-<!-- FURION POWER - Enhanced fbclid capture for confirmation page -->
-  <script>
-      
-function getCookie(name) {
-  const match = document.cookie.match(
-    new RegExp('(^| )' + name + '=([^;]+)')
-  );
-
-  return match ? decodeURIComponent(match[2]) : null;
-}
-
-(function () {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const fbclid = params.get('fbclid');
-
-    // NÃO recriar se já existir
-    if (fbclid) {
-      const fbc = `fb.1.${Date.now()}.${fbclid}`;
-
-      document.cookie =
-        `_fbc=${encodeURIComponent(fbc)}; path=/; max-age=${60 * 60 * 24 * 365 * 2}; SameSite=None; Secure`;
-
+   <script>
+  // capturar fbclid e gravar em cookie _fbc + localStorage
+  (function() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fbclid = params.get('fbclid');
+      if (!fbclid) return;
+      // formato recomendado: fb.1.<timestamp>.<fbclid>
+      const fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+      // salva cookie _fbc (2 anos)
+      document.cookie = `_fbc=${encodeURIComponent(fbc)}; path=/; max-age=${60*60*24*365*2}; SameSite=None; Secure`;
+      // salva no localStorage para enviar na CAPI
       localStorage.setItem('_fbc', fbc);
+      console.log('fbc salvo:', fbc);
+    } catch(e){ console.warn('erro capturar fbclid', e); }
+  })();
+</script>
 
-      console.log('🔥 FBC criado:', fbc);
-    }
-
-  } catch (e) {
-    console.warn('Erro _fbc:', e);
-  }
-})();
-
-  </script>
-
-
-
-  <!-- FURION POWER - PIXEL SINCRONIZADO COM ATIVAR_CADASTRO -->
-  <script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-
-
-
-  // ✅ MESMO PIXEL ID DO ATIVAR_CADASTRO
-  // ✅ FURION POWER - ADVANCED MATCHING SINCRONIZADO
-fbq('init', '1100931802499405', {
-  em: localStorage.getItem('user_email') || '',
-  ph: localStorage.getItem('user_phone') || ''
-});
- // StreamForce Principal
-
-
-(function() {
-  const fbpCookie = getCookie('_fbp');
-  if (fbpCookie) {
-    localStorage.setItem('_fbp', fbpCookie);
-  }
-})();
-  
-  // Enhanced Conversions Data
-  fbq('track', 'PageView');
-  </script>
-
-
-
-  <noscript>
-    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1100931802499405&ev=PageView&noscript=1"/>
-  </noscript>
-
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1091304380608880');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1091304380608880&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro Confirmado - STREAM Premium</title>
-  
-  <!-- CSS mantido igual -->
+  <title>Cadastro Confirmado - Stream</title>
+  <meta name="color-scheme" content="dark light" />
   <style>
-     :root{
+    :root{
       --bg:#0f1115;
       --panel:#171a21;
       --soft:#232838;
@@ -164,7 +120,8 @@ fbq('init', '1100931802499405', {
   </style>
 </head>
 <body>
-    <!-- Confetti Elements -->
+
+  <!-- Confetti Elements -->
   <div id="confetti-box">
     <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
     <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
@@ -214,11 +171,11 @@ fbq('init', '1100931802499405', {
     <div class="support-section">
       <div class="support-title">🆘 Não recebeu em 10 minutos?</div>
       <div class="support-text">Nossa equipe está sempre pronta para ajudar! Entre em contato conosco imediatamente.</div>
-      <a class="support-btn" target="_blank" href="https://wa.me/5577999066302?text=Ol%C3%A1!%20Finalizei%20meu%20cadastro%20na%20StreamForce%20mas%20ainda%20n%C3%A3o%20recebi%20os%20dados%20de%20acesso.%20Podem%20me%20ajudar%3F">📞 CONTATO EMERGENCIAL</a>
+      <a class="support-btn" target="_blank" href="https://wa.me/5577999066302?text=Ol%C3%A1!%20Finalizei%20meu%20cadastro%20na%20Stream%20mas%20ainda%20n%C3%A3o%20recebi%20os%20dados%20de%20acesso.%20Podem%20me%20ajudar%3F">📞 CONTATO EMERGENCIAL</a>
     </div>
 
     <div class="footer">
-      <div class="footer-text">© 2024 StreamForce. Todos os direitos reservados.</div>
+      <div class="footer-text">© 2024 Stream. Todos os direitos reservados.</div>
       <div class="security-badges">
         <div class="badge">🔒 Dados Protegidos</div>
         <div class="badge">✅ Acesso Garantido</div>
@@ -227,633 +184,273 @@ fbq('init', '1100931802499405', {
     </div>
   </div>
 
-
-
-
   <script>
-    // FURION POWER CONFIG
     const CONFIG = {
-      whatsappNumbers: ['5577999066302'], // ✅ MESMO DO ATIVAR_CADASTRO
-      pixelIds: ['1100931802499405'], // ✅ MESMO DO ATIVAR_CADASTRO
-      capiEndpoints: [
-        'https://capi-api-2.onrender.com/event' // ✅ MESMO DO ATIVAR_CADASTRO
-      ]
-    };
+    whatsappNumber: '5577999066302'
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // NÃO inicialize o Pixel aqui — ele já foi iniciado no <head>.
+    // Apenas chame os inits da página:
+    initFinalPixelEvents();   // Dispara Purchase uma única vez
+    initCountdown();
+    initSuccessTracking();
+    initAutoActions();
+    addVisualEffects();
+    initConfetti();
+    firePurchaseEvent();
+  });
+
+function initFinalPixelEvents(){
+  if(typeof fbq==='undefined') return;
+  // NÃO dispare aqui o Purchase sem eventID — o Purchase real será disparado
+  // mais abaixo com um event_id gerado e também enviado para a CAPI.
+  fbq('trackCustom','Registration_Success',{
+    eventsource:'successpage',conversion_complete:true,timestamp:new Date().toISOString()
+  });
+  setTimeout(()=>{ fbq('trackCustom','SuccessPageEngagement',{timeonpage:30}); }, 30000);
+}
 
 
-    // ✅ FURION POWER - MESMA FUNÇÃO DO ATIVAR_CADASTRO
-    function generateSyncEventId(eventType = 'purchase') {
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substring(2, 10);
-        
-        // Recuperar base ID salvo no registro
-        let baseId = localStorage.getItem('furion_base_event') || 
-                    sessionStorage.getItem('furion_base_event') ||
-                    getCookie('furion_event_base') ||
-                    localStorage.getItem('shared_event_id') || // Fallback
-                    null;
-        
-        if (!baseId) {
-            console.warn('⚠️ Base ID não encontrado, gerando fallback');
-            baseId = `fallback_${timestamp}_${random}`;
-        }
-        
-        // Converter base para purchase
-        const eventId = baseId.replace('base_', `${eventType}_`).replace('reg_', `${eventType}_`);
-        console.log(`🎯 Purchase Event ID: ${eventId}`);
-        return eventId;
+    function initCountdown(){
+      const minutesEl=document.getElementById('minutes');
+      const secondsEl=document.getElementById('seconds');
+      if(!minutesEl||!secondsEl) return;
+      let total=5*60;
+      const t=setInterval(()=>{
+        const m=Math.floor(total/60), s=total%60;
+        minutesEl.textContent=String(m).padStart(2,'0');
+        secondsEl.textContent=String(s).padStart(2,'0');
+        if(total<=0){ clearInterval(t); showAccessReady(); }
+        total--;
+      },1000);
     }
 
-        // ✅ FURION POWER - DEVICE FINGERPRINTING PARA CONFIRMAÇÃO
-    function initDeviceFingerprintConfirmation() {
-        // Recuperar fingerprint do registro ou criar novo
-        let deviceInfo = JSON.parse(localStorage.getItem('device_fingerprint') || '{}');
-        
-        if (!deviceInfo.screen_resolution) {
-            deviceInfo = {
-                screen_resolution: `${screen.width}x${screen.height}`,
-                color_depth: screen.colorDepth,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                language: navigator.language,
-                platform: navigator.platform,
-                device_memory: navigator.deviceMemory || 'unknown',
-                connection_type: navigator.connection ? navigator.connection.effectiveType : 'unknown'
-            };
-            localStorage.setItem('device_fingerprint', JSON.stringify(deviceInfo));
-        }
-        
-        console.log('🔥 Device fingerprint confirmação:', deviceInfo);
-        return deviceInfo;
+    function showAccessReady(){
+      const timerSection=document.querySelector('.access-timer');
+      const timerTitle=timerSection.querySelector('.timer-title');
+      const countdown=timerSection.querySelector('.countdown-display');
+      const msg=timerSection.querySelector('.timer-message');
+      timerTitle.innerHTML='✅ Dados de acesso enviados!';
+      countdown.innerHTML='<div>📱 Verifique seu WhatsApp agora mesmo!</div>';
+      msg.innerHTML='Se não recebeu, use o contato emergencial abaixo.';
+      timerSection.style.background='rgba(34,197,94,.18)';
+      timerSection.style.borderColor='rgba(34,197,94,.5)';
+      timerSection.style.transform='scale(1.02)';
+      setTimeout(()=>{ timerSection.style.transform=''; }, 280);
+      if(typeof fbq!=='undefined'){ fbq('trackCustom','AccessTimerComplete'); }
     }
 
+    function initSuccessTracking(){
+      let time=0;
+      const it=setInterval(()=>{
+        time+=10;
+        if(time===60 && typeof fbq!=='undefined') fbq('trackCustom','SuccessPage1min');
+        if(time===120 && typeof fbq!=='undefined') fbq('trackCustom','SuccessPage2min');
+      },10000);
 
-    // Executar na confirmação
-    initDeviceFingerprintConfirmation();
+      let scrolled=false;
+      window.addEventListener('scroll',()=>{
+        if(!scrolled){ scrolled=true; if(typeof fbq!=='undefined') fbq('trackCustom','SuccessPageScroll'); }
+      });
 
+      document.querySelectorAll('a').forEach(a=>{
+        a.addEventListener('click',e=>{
+          if(typeof fbq!=='undefined'){
+            fbq('trackCustom','SuccessPageLink_Click',{link_url:a.href,link_text:a.textContent.trim()});
+          }
+        });
+      });
 
+      window.addEventListener('beforeunload',()=>{ clearInterval(it); if(typeof fbq!=='undefined') fbq('trackCustom','SuccessPageExit'); });
+    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      initFinalPixelEvents();
-      initCountdown();
-      initSuccessTracking();
-      initAutoActions();
-      firePurchaseEvent(); // ✅ Chama função async corretamente
-      
-      console.log('🔥 FURION TV - Página de confirmação carregada');
-      console.log('💎 Cliente Premium confirmado!');
+    function initAutoActions(){
+      setTimeout(sendWhatsAppNotification, 10000);
+      setTimeout(()=>{ if(confirm('Página aberta há muito tempo. Deseja atualizar?')) location.reload(); }, 1800000);
+      // Mobile tweaks
+      if(window.innerWidth<=768){
+        const vp=document.querySelector('meta[name="viewport"]');
+        if(vp) vp.setAttribute('content','width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        setTimeout(()=> toast('💡 Adicione esta página aos favoritos!', 'info'), 8000);
+      }
+      // Share button (se suportado)
+      if(navigator.share){
+        const btn=document.createElement('button');
+        btn.textContent='📤 Compartilhar Sucesso';
+        Object.assign(btn.style,{position:'fixed',top:'16px',right:'16px',background:'linear-gradient(45deg,#22c55e,#16a34a)',color:'#fff',border:'none',padding:'10px 14px',borderRadius:'999px',fontWeight:'800',cursor:'pointer',zIndex:'1000',boxShadow:'0 8px 24px rgba(0,0,0,.25)'});
+        btn.onclick=async()=>{
+          try{
+            await navigator.share({title:'Stream - Cadastro Ativado!',text:'Acabei de ativar minha assinatura Stream Premium! 🎉',url:location.href});
+            if(typeof fbq!=='undefined') fbq('trackCustom','SuccessPageShared');
+          }catch(e){ console.log('Share cancelado',e); }
+        };
+        document.body.appendChild(btn);
+      }
+      // Conectividade
+      function checkConnection(){
+        if(navigator.onLine) toast('✅ Conexão estável detectada','success');
+        else toast('⚠️ Sem conexão. Verifique sua internet.','error');
+      }
+      setInterval(checkConnection, 30000);
+      window.addEventListener('online', ()=>toast('✅ Conexão restabelecida','success'));
+      window.addEventListener('offline',()=>toast('⚠️ Sem conexão','error'));
+      // Performance
+      window.addEventListener('load',()=>{
+        const ms = Math.round(performance.now());
+        if(typeof fbq!=='undefined') fbq('trackCustom','SuccessPageLoad_Time',{loadtimems:ms});
+        console.log(`📊 Página carregada em ${ms}ms`);
+      });
+      // Easter egg (Konami)
+      const seq=[38,38,40,40,37,39,37,39,66,65]; let typed=[];
+      document.addEventListener('keydown',e=>{
+        typed.push(e.keyCode); if(typed.length>seq.length) typed.shift();
+        if(typed.length===seq.length && typed.every((v,i)=>v===seq[i])){
+          document.body.style.animation='rainbow 2s infinite';
+          toast('🎮 Modo Especial Ativado!', 'success');
+          if(typeof fbq!=='undefined') fbq('trackCustom','EasterEggActivated');
+          setTimeout(()=>{ document.body.style.animation=''; }, 8000);
+        }
+      });
+      const style=document.createElement('style');
+      style.textContent='@keyframes rainbow{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}';
+      document.head.appendChild(style);
+    }
+
+    function sendWhatsAppNotification(){
+      const message = `🎉 Stream - CADASTRO FINALIZADO COM SUCESSO
+✅ Status: Cadastro ativado e confirmado
+⏰ Data/Hora: ${new Date().toLocaleString('pt-BR')}
+📱 Próximo passo: Aguardar dados de acesso
+
+🎬 Informações importantes:
+• Seus dados de acesso serão enviados em até 5 minutos
+• Você receberá tutorial de instalação completo
+• Suporte técnico 24/7 disponível
+• Qualidade 4K garantida
+
+🚀 Bem-vindo à Oxytv Premium!`;
+      const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+      console.log('WhatsApp URL (automática):', url);
+      // Opcional: abrir automaticamente
+      // window.open(url,'_blank');
+    }
+
+    function addVisualEffects(){
+      // partículas flutuantes
+      const cont=document.querySelector('.container');
+      setInterval(()=>{
+        const p=document.createElement('div');
+        p.style.cssText=`position:absolute;width:4px;height:4px;background:${['#FFD700','#22c55e','#3b82f6'][Math.floor(Math.random()*3)]};border-radius:50%;opacity:.7;left:${Math.random()*100}%;bottom:-10px;animation:floatUp 4s linear forwards;pointer-events:none`;
+        cont.appendChild(p);
+        setTimeout(()=>{ p.remove(); }, 4000);
+      }, 2000);
+      const st=document.createElement('style');
+      st.textContent='@keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:.7}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}';
+      document.head.appendChild(st);
+      setTimeout(()=> toast('🎉 Bem-vindo à Stream Premium!'), 2500);
+      setTimeout(()=> toast('📱 Fique atento ao WhatsApp!', 'info'), 150000);
+      document.addEventListener('visibilitychange',()=>{
+        if(typeof fbq!=='undefined') fbq('trackCustom', document.hidden ? 'SuccessPageHidden' : 'SuccessPageVisible');
+      });
+    }
+
+    function toast(message, type='success'){
+      const t=document.createElement('div');
+      t.className='toast';
+      t.style.background = type==='success' ? '#0e4223' : (type==='info' ? '#111826' : '#7a0912');
+      t.textContent=message;
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.animation='out .25s ease forwards'; setTimeout(()=>t.remove(), 250); }, 3800);
+    }
+
+    function initConfetti(){
+      const colors=['#FFD700','#22c55e','#3b82f6','#ff4500','#9C27B0'];
+      document.querySelectorAll('.confetti').forEach((c,i)=>{
+        c.style.left = `${(i*9)%100}%`;
+        c.style.animationDelay = `${(i%5)*.25}s`;
+        c.style.background = colors[i%colors.length];
+      });
+    }
+
+function sendCAPIEvent(payload) {
+    const url = "https://capi-api-2.onrender.com/event";
+
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+        const ok = navigator.sendBeacon(url, blob);
+        console.log('📡 CAPI via sendBeacon =>', ok);
+        return Promise.resolve({ beacon: ok });
+      }
+    } catch(e){
+      console.warn('sendBeacon falhou', e);
+    }
+
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true
+    })
+    .then(res => res.ok ? res.json().catch(()=>({ ok: true })) : { ok: false, status: res.status })
+    .catch(err => {
+      console.error('❌ CAPI fetch error', err);
+      return { ok: false, error: String(err) };
     });
-
-
-
-
-
-    // ✅ FURION POWER - PURCHASE EVENT CORRIGIDO (ASYNC)
-async function firePurchaseEvent() {
-
-    if (typeof fbq === 'undefined') {
-        console.warn('fbq não disponível');
-        return;
-    }
-
-    const purchaseEventId =
-      localStorage.getItem('purchase_event_id') ||
-      generateSyncEventId('purchase');
-
-    const lastPurchaseEvent =
-      localStorage.getItem('furion_purchase_fired');
-
-    if (lastPurchaseEvent === purchaseEventId) {
-        console.log('🔥 Purchase duplicado bloqueado.');
-        return;
-    }
-
-    
-
-
-
-    
-
-
-        const transactionId = localStorage.getItem("transacao") || `FTV_${Date.now()}`;
-
-    
-
-        // ✅ FURION POWER - PURCHASE COM ENHANCED CONVERSIONS DEVASTADORAS
-        const deviceFingerprint = JSON.parse(localStorage.getItem('device_fingerprint') || '{}');
-        const sessionDuration = Date.now() - parseInt(localStorage.getItem('session_start') || Date.now());
-        const registrationTime = parseInt(localStorage.getItem('registration_time') || Date.now());
-        const conversionJourney = Date.now() - registrationTime;
-
-     
-        if (!window.furionEventId) {
-          window.furionEventId = purchaseEventId;
-        }
-
-    
-        fbq('track', 'Purchase', {
-            content_ids: ['furion-tv-premium'],
-            content_name: 'FURION TV Premium Subscription',
-            content_type: 'subscription',
-            content_category: 'streaming_service',
-            value: 25.00,
-            currency: 'BRL',
-            num_items: 1,
-            order_id: transactionId
-        }, {
-            eventID: purchaseEventId
-        });
-
-    
-
-        // ✅ CUSTOM EVENTS COM IDs ÚNICOS
-        // ✅ FURION POWER - CUSTOM EVENTS DE VALOR PREMIUM
-
-     
-
-    
-
-        // ✅ FURION POWER - CAPI COM DADOS PUROS (SEM HASH NO FRONT)
-        try {
-            await Promise.allSettled(CONFIG.capiEndpoints.map(async (endpoint) => {
-                const userData = {
-                    name: localStorage.getItem("user_name") || "",
-                    email: localStorage.getItem("user_email") || "",
-                    phone: localStorage.getItem("user_phone") || ""
-                };
-
-    
-
-                // ✅ TELEFONE CONSISTENTE COM OUTRAS PÁGINAS
-                let phoneForCAPI = userData.phone ? userData.phone.replace(/\D/g, '') : '';
-
-                
-                console.log('📱 Confirmação - Telefone recuperado:', userData.phone);
-                console.log('📱 Confirmação - Telefone limpo:', phoneForCAPI);
-
-              
-                if (phoneForCAPI) {
-                    // ✅ MESMA LÓGICA DO FRONT-END
-                    if (phoneForCAPI.length === 10) {
-                        phoneForCAPI = phoneForCAPI.substring(0, 2) + '9' + phoneForCAPI.substring(2);
-                    }
-                    
-                    if (phoneForCAPI.length === 11 && !phoneForCAPI.startsWith('55')) {
-                        phoneForCAPI = '55' + phoneForCAPI;
-                    }
-                    
-                    console.log('📱 Confirmação - Telefone FINAL:', phoneForCAPI);
-                }
-
-    
-
-                const fbc = localStorage.getItem("_fbc") || getCookie('_fbc') || "";
-                const fbp = localStorage.getItem("_fbp") || getCookie('_fbp') || "";
-
-    
-
-                return sendCAPIEvent(endpoint, {
-                    event_name: "Purchase",
-                    event_id: purchaseEventId, // ✅ MESMO ID DO BROWSER
-                    event_time: Math.floor(Date.now() / 1000),
-                    action_source: "website",
-                    event_source_url: window.location.href,
-                    user: {
-                        // ✅ DADOS PUROS - HASH SERÁ FEITO NO BACKEND
-                        name: userData.name.trim(),
-                        email: userData.email.trim().toLowerCase(),
-                        phone: phoneForCAPI,
-                        fbp: fbp,
-                        fbc: fbc,
-                        external_id:
-        userData.email || phoneForCAPI
-    ? `${userData.email.trim().toLowerCase()}_${phoneForCAPI}`
-    : undefined,
-                        client_user_agent: navigator.userAgent
-                    },
-                    custom_data: {
-                        value: 25.00,
-                        currency: "BRL",
-                        num_items: 1,
-                        order_id: transactionId
-                    }
-                });
-            }));
-
-    
-
-            console.log(`🔥 Purchase disparado com ID: ${purchaseEventId}`);
-        } catch (error) {
-            console.error('❌ Erro na CAPI:', error);
-        }
-
-    
-
-        // ✅ MARCAR COMO DISPARADO
-        localStorage.setItem('furion_purchase_fired', purchaseEventId);
-        localStorage.setItem('purchase_timestamp', Date.now());
-    }
-
-
-
-    // ✅ FUNÇÃO HASH IDÊNTICA AO ATIVAR_CADASTRO
-    // ✅ FURION POWER - FUNÇÕES DE CÁLCULO PREMIUM
-
-    
-
-    function generateDeviceId() {
-        const deviceFingerprint = JSON.parse(localStorage.getItem('device_fingerprint') || '{}');
-        const components = [
-            deviceFingerprint.screen_resolution,
-            deviceFingerprint.timezone,
-            deviceFingerprint.language,
-            navigator.userAgent.substring(0, 50)
-        ].join('_');
-        
-        // Simple hash for device ID
-        let hash = 0;
-        for (let i = 0; i < components.length; i++) {
-            const char = components.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32-bit integer
-        }
-        return Math.abs(hash).toString(36);
-    }
-
-    
-
-    function calculateConversionSpeed() {
-        const registrationTime = parseInt(localStorage.getItem('registration_time') || Date.now());
-        const conversionTime = Date.now() - registrationTime;
-        
-        if (conversionTime < 60000) return 'instant'; // < 1 min
-        if (conversionTime < 300000) return 'fast'; // < 5 min
-        if (conversionTime < 1800000) return 'normal'; // < 30 min
-        return 'slow';
-    }
-
-
-
-
-    // ✅ CAPI FUNCTION CORRIGIDA
-    async function sendCAPIEvent(endpoint, payload) {
-      try {
-        // Try sendBeacon first for critical events
-        if (navigator.sendBeacon) {
-          const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-          const success = navigator.sendBeacon(endpoint, blob);
-          if (success) {
-            console.log('📡 CAPI via sendBeacon: success');
-            return { method: 'sendBeacon', success: true };
-          }
-        }
-      } catch(e) {
-        console.warn('sendBeacon failed, using fetch:', e);
-      }
-
-
-
-      // Fallback to fetch
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true
-      });
-
-
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-
-
-      const result = await response.json();
-
-console.log('📡 CAPI RESPONSE:', result);
-
-return result;
-    }
-
-
-
-    // ✅ WHATSAPP NOTIFICATION SINCRONIZADA
-    function sendEnhancedWhatsAppNotification() {
-      const userData = {
-        name: localStorage.getItem("user_name") || "Cliente",
-        email: localStorage.getItem("user_email") || "",
-        phone: localStorage.getItem("user_phone") || "",
-        transaction: localStorage.getItem("transacao") || "N/A",
-        timestamp: new Date().toLocaleString('pt-BR'),
-        utm_source: localStorage.getItem('utm_source') || 'direct'
-      };
-
-
-
-      const message = `🔥 FURION TV - PREMIUM ATIVADO COM SUCESSO!
-
-
-
-👤 Cliente: ${userData.name}
-📧 Email: ${userData.email}
-📱 WhatsApp: ${userData.phone}
-💎 ID Transação: ${userData.transaction}
-🎯 Origem: ${userData.utm_source}
-⏰ Confirmação: ${userData.timestamp}
-
-
-
-✅ STATUS: COMPRA CONFIRMADA
-💰 VALOR: R$ 25,00
-🚀 PRÓXIMOS PASSOS:
-• Credenciais enviadas automaticamente
-• Acesso liberado em até 5 minutos
-• Suporte premium 24/7 ativo
-
-
-
-🎬 BEM-VINDO AO FURION TV PREMIUM!
-💎 Experiência premium iniciada!`;
-
-
-
-      CONFIG.whatsappNumbers.forEach((number, index) => {
-        setTimeout(() => {
-          const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
-          console.log(`📱 WhatsApp Confirmação ${index + 1}:`, url);
-        }, index * 2000);
-      });
-    }
-
-
-
-    // ✅ TODAS AS OUTRAS FUNÇÕES MANTIDAS IGUAIS
-    function initSuccessTracking() {
-      let engagementTime = 0;
-      const trackingInterval = setInterval(() => {
-        engagementTime += 10;
-        
-        if (engagementTime === 30 && typeof fbq !== 'undefined') {
-         
-        }
-        
-        if (engagementTime === 60 && typeof fbq !== 'undefined') {
-         
-        }
-
-
-
-        if (engagementTime === 120 && typeof fbq !== 'undefined') {
-         
-        }
-      }, 10000);
-
-
- // Track scroll behavior
-      let maxScroll = 0;
-      window.addEventListener('scroll', () => {
-        const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-        if (scrollPercent > maxScroll) {
-          maxScroll = scrollPercent;
-          
-          if (maxScroll >= 50 && typeof fbq !== 'undefined') {
-          }
-        }
-      });
-
-
-
-      // Track link clicks with enhanced data
-      document.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', (e) => {
-        });
-      });
-
-
-
-      // Enhanced exit tracking
-      window.addEventListener('beforeunload', () => {
-        clearInterval(trackingInterval);
-        
-      });
-
-
-
-      // Visibility change tracking
-      document.addEventListener('visibilitychange', () => {
-      });
-    }
-
-
-
-    function initCountdown() {
-      const minutesEl = document.getElementById('minutes');
-      const secondsEl = document.getElementById('seconds');
-      if (!minutesEl || !secondsEl) return;
-
-
-
-      let totalSeconds = 5 * 60; // 3 minutes
-      
-      const timer = setInterval(() => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        
-        minutesEl.textContent = String(minutes).padStart(2, '0');
-        secondsEl.textContent = String(seconds).padStart(2, '0');
-        
-        // Urgency milestones
-        if (totalSeconds === 120 && typeof fbq !== 'undefined') {
-         
-        }
-        
-        if (totalSeconds === 60 && typeof fbq !== 'undefined') {
-         
-        }
-        
-        if (totalSeconds === 30 && typeof fbq !== 'undefined') {
-         
-        }
-        
-        if (totalSeconds <= 0) {
-          clearInterval(timer);
-          showAccessReady();
-        }
-        
-        totalSeconds--;
-      }, 1000);
-    }
-
-
-
-    function showAccessReady() {
-      const timerSection = document.querySelector('.access-timer');
-      const timerTitle = timerSection.querySelector('.timer-title');
-      const countdown = timerSection.querySelector('.countdown-display');
-      const message = timerSection.querySelector('.timer-message');
-      
-      timerTitle.innerHTML = '✅ Credenciais enviadas com sucesso!';
-      countdown.innerHTML = '<div style="font-size: 1.5rem; color: #22c55e;">📱 Verifique seu WhatsApp agora!</div>';
-      message.innerHTML = '🎉 Bem-vindo ao STREAM  Premium!';
-      
-      timerSection.style.background = 'rgba(34,197,94,.15)';
-      timerSection.style.borderColor = 'rgba(34,197,94,.4)';
-      timerSection.style.transform = 'scale(1.05)';
-      
-      setTimeout(() => { 
-        timerSection.style.transform = 'scale(1)'; 
-      }, 500);
-      
-
-      
-      toast('🎉 Credenciais enviadas! Verifique o WhatsApp!', 'success');
-    }
-
-
-
-    function initAutoActions() {
-      // Enhanced WhatsApp notification
-      setTimeout(() => {
-        sendEnhancedWhatsAppNotification();
-      }, 8000);
-
-
-
-      // Smart page refresh for long sessions
-      setTimeout(() => {
-        if (confirm('🔄 Atualizar página para verificar novos recursos?')) {
-          location.reload();
-        }
-      }, 1200000); // 20 minutes
-
-
-
-      // Mobile optimizations
-      if (window.innerWidth <= 768) {
-        const viewport = document.querySelector('meta[name="viewport"]');
-        if (viewport) {
-          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        }
-        
-        setTimeout(() => {
-          toast('📱 Adicione aos favoritos para acesso rápido!', 'info');
-        }, 15000);
-        
-        // Mobile gesture tracking
-        let touchStartY = 0;
-        document.addEventListener('touchstart', (e) => {
-          touchStartY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchend', (e) => {
-          const touchEndY = e.changedTouches[0].clientY;
-          const swipeDistance = touchStartY - touchEndY;
-          
-          if (Math.abs(swipeDistance) > 50 && typeof fbq !== 'undefined') {
-          
-          }
-        });
-      }
-
-
-
-      // Enhanced share functionality
-      if (navigator.share) {
-      }
-
-
-
-      if (typeof initNetworkMonitoring === 'function') {
-        initNetworkMonitoring();
-      }
-
-      if (typeof initPerformanceMonitoring === 'function') {
-        initPerformanceMonitoring();
-      }
-
-      if (typeof initBehaviorTracking === 'function') {
-        initBehaviorTracking();
-      }
-    }
-
-
-    function toast(message, type = 'success') {
-      const toastEl = document.createElement('div');
-      toastEl.className = 'furion-toast';
-      
-      const bgColors = {
-        success: 'linear-gradient(45deg, #22c55e, #16a34a)',
-        info: 'linear-gradient(45deg, #3b82f6, #2563eb)',
-        error: 'linear-gradient(45deg, #ef4444, #dc2626)',
-        warning: 'linear-gradient(45deg, #f59e0b, #d97706)'
-      };
-      
-      toastEl.style.cssText = `
-        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-        background: ${bgColors[type] || bgColors.info};
-        color: white; padding: 16px 20px; border-radius: 12px;
-        font-weight: 700; box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-        animation: slideInToast 0.3s ease both;
-        max-width: 320px; font-size: 14px; line-height: 1.4;
-        border: 1px solid rgba(255,255,255,0.1);
-      `;
-      
-      toastEl.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span>${message}</span>
-          <button onclick="this.parentElement.parentElement.remove()" style="
-            background: none; border: none; color: white; font-size: 18px;
-            cursor: pointer; padding: 0; margin-left: auto; opacity: 0.7;
-          ">×</button>
-        </div>
-      `;
-      
-      document.body.appendChild(toastEl);
-      
-      setTimeout(() => {
-        if (document.body.contains(toastEl)) {
-          toastEl.style.animation = 'slideOutToast 0.3s ease forwards';
-          setTimeout(() => toastEl.remove(), 300);
-        }
-      }, 5000);
-      
-      if (!document.head.querySelector('style[data-toast-animations]')) {
-        const toastStyle = document.createElement('style');
-        toastStyle.setAttribute('data-toast-animations', 'true');
-        toastStyle.textContent = `
-          @keyframes slideInToast {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes slideOutToast {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(100%); }
-          }
-        `;
-        document.head.appendChild(toastStyle);
-      }
-    }
-
-
-
-    function initFinalPixelEvents() {
-      if (typeof fbq === 'undefined') return;
-      
-    
-      
-      setTimeout(() => {
-
-      }, 30000);
-      
-      setTimeout(() => {
-       
-      }, 60000);
-    }
-
-
-
-
-
+  }
+
+function firePurchaseEvent(){
+  // evita disparo múltiplo (por reload)
+  if(localStorage.getItem('purchase_fired')) {
+    console.log('Purchase já disparado (purchase_fired). Pulando.');
+    return;
+  }
+
+  if (typeof fbq === 'undefined') {
+    console.warn('fbq não disponível — Purchase não será disparado no client.');
+    return;
+  }
+
+  const eventId = 'purchase_' + Date.now() + '_' + Math.floor(Math.random()*100000);
+
+  // Pixel (cliente)
+  fbq('track', 'Purchase', {
+    content_ids: ['Oxytv-premium'],
+    content_name: 'Oxytv Premium',
+    content_type: 'subscription',
+    value: 25.00,         // opcional, mas útil para otimização
+    currency: 'BRL',
+    order_id: localStorage.getItem("transacao") || "N/A"
+  }, { eventID: eventId });
+
+  // salva flag para evitar reenvio se a pessoa atualizar a página
+  try { localStorage.setItem('purchase_fired', eventId); } catch(e){}
+
+const payload = {
+  event_name: "Purchase",
+  event_id: eventId,
+  event_source_url: window.location.href,
+  user: {
+    name: localStorage.getItem("user_name") || "",
+    email: localStorage.getItem("user_email") || "",
+    phone: localStorage.getItem("user_phone") || "",
+    fbp: localStorage.getItem("_fbp") || "",
+    fbc: localStorage.getItem("_fbc") || ""
+  },
+  custom_data: {
+    content_ids: ["Oxytv-premium"],
+    content_name: "OxytvPremium",
+    content_type: "subscription",
+    value: 25.00,
+    currency: "BRL",
+    order_id: localStorage.getItem("transacao") || "N/A"
+  }
+};
+
+sendCAPIEvent(payload).then(resp => console.log('📡 CAPI resp', resp));
+}
 
 
   </script>
